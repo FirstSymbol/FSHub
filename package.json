@@ -1,6 +1,6 @@
 {
   "name": "com.firstsymbol.hub",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "displayName": "FirstSymbol Hub",
   "description": "One editor window for FirstSymbol packages: what is installed and at which version, what does not fit together, each product's settings and a status card, links, and update checks that stay off until you turn them on.",
   "unity": "6000.3",

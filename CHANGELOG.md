@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented in this file.
 
+## [0.1.3] - 2026-11-09
+
+### Added
+- **The hub as a folder under `Assets` is detected.** The hub adds `FIRSTSYMBOL_HUB` to the scripting define symbols of the build targets, so the products' hub pages compile without a package, and takes it away, before the pages are built against a missing hub, when its folder is deleted or moved. Only a symbol the hub added is ever removed (a list is kept in `ProjectSettings/FirstSymbolAutoDefines.txt`); a symbol you set yourself stays. One log line says when it changed anything. With the hub as a package nothing changes.
+
+### Changed
+- The README no longer asks you to add `FIRSTSYMBOL_HUB` by hand.
+
 ## [0.1.2] - 2026-11-09
 
 ### Fixed
