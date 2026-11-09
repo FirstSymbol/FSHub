@@ -1,0 +1,31 @@
+{
+  "name": "com.firstsymbol.hub",
+  "version": "0.1.0",
+  "displayName": "FirstSymbol Hub",
+  "description": "One editor window for FirstSymbol packages: what is installed and at which version, what does not fit together, each product's settings and a status card, links, and update checks that stay off until you turn them on.",
+  "unity": "6000.3",
+  "license": "MIT",
+  "author": {
+    "name": "FirstSymbol",
+    "email": "firstsymbol.0@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FirstSymbol/FSHub.git"
+  },
+  "documentationUrl": "https://github.com/FirstSymbol/FSHub#readme",
+  "changelogUrl": "https://github.com/FirstSymbol/FSHub/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/FirstSymbol/FSHub/blob/main/LICENSE.md",
+  "keywords": [
+    "hub",
+    "firstsymbol",
+    "editor",
+    "settings",
+    "lettera",
+    "vectra"
+  ],
+  "dependencies": {
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "FirstSymbol.Hub.Editor",
+    "rootNamespace": "FirstSymbol.Hub",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
