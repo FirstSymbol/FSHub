@@ -14,7 +14,7 @@ https://github.com/FirstSymbol/FSHub.git
 
 Requires Unity 6.3 LTS (6000.3) or newer. The hub is editor-only: it adds nothing to a build.
 
-The hub works as a package or as a plain folder under `Assets`: as a folder, it adds `FIRSTSYMBOL_HUB` to the scripting define symbols by itself (and takes it away when the folder goes), so the products' pages appear. A symbol you set yourself is left alone.
+The hub works as a package or as a plain folder under `Assets`: as a folder, it adds `FIRSTSYMBOL_HUB` to the scripting define symbols by itself (and takes it away when the folder goes), so the products' pages appear. A symbol you set yourself is left alone. If you delete the hub while the editor is closed, Unity opens with compile errors (or Safe Mode): remove `FIRSTSYMBOL_HUB` in **Project Settings > Player > Scripting Define Symbols**, or put the folder back and delete it from inside Unity.
 
 ## Using it
 

@@ -10,6 +10,9 @@ All notable changes to this package are documented in this file.
 ### Changed
 - The README no longer asks you to add `FIRSTSYMBOL_HUB` by hand.
 
+### Limits
+- Deleting the hub while the editor is closed leaves `FIRSTSYMBOL_HUB` set, so Unity opens with compile errors. Remove it in Project Settings > Player > Scripting Define Symbols, or put the folder back and delete it from inside Unity.
+
 ## [0.1.2] - 2026-11-09
 
 ### Fixed
