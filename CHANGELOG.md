@@ -2,6 +2,11 @@
 
 All notable changes to this package are documented in this file.
 
+## [0.1.4] - 2026-11-09
+
+### Fixed
+- **The hub folder detection waited for an idle editor.** It ran from `EditorApplication.delayCall`, which an editor nobody has focused may not run for a long time, so `FIRSTSYMBOL_HUB` was not set. It now runs as the scripts load, and once more when the editor is idle. **Tools > FirstSymbol > Detect Hub Folder** runs it by hand and says what it found.
+
 ## [0.1.3] - 2026-11-09
 
 ### Added

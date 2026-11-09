@@ -101,7 +101,34 @@ namespace FirstSymbol.Hub
         }
 
         [InitializeOnLoadMethod]
-        static void OnLoad() => EditorApplication.delayCall += () => Sync(Wanted(FindHub(null, null)));
+        static void OnLoad()
+        {
+            // Now, and again when the editor is idle. delayCall alone is not enough: an editor nobody has focused may not run it for a long time.
+            Run();
+            EditorApplication.delayCall += Run;
+        }
+
+        [MenuItem("Tools/FirstSymbol/Detect Hub Folder", false, 1)]
+        static void DetectNow()
+        {
+            string path = FindHub(null, null);
+            bool wanted = Wanted(path);
+            int changed = Sync(wanted);
+            Debug.Log("FirstSymbol Hub: assembly definition " + (path ?? "not found") + (wanted ? ", needs " + Define + "." : ", " + Define + " not needed from here (a package sets it itself).")
+                      + (changed == 0 ? " Nothing to change." : ""));
+        }
+
+        static void Run()
+        {
+            try
+            {
+                Sync(Wanted(FindHub(null, null)));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("FirstSymbol Hub: could not update the scripting define symbols: " + e.Message);
+            }
+        }
 
         sealed class Watcher : AssetPostprocessor
         {
