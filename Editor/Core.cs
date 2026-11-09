@@ -156,7 +156,7 @@ namespace FirstSymbol.Hub
     internal static class Registry
     {
         /// <summary>Joins what the Package Manager lists with what products registered. Catalog products come first, then any other registered product.</summary>
-        internal static List<ProductState> Build(IEnumerable<PackageRecord> packages, IEnumerable<HubProduct> registrations)
+        internal static List<ProductState> Build(IEnumerable<PackageRecord> packages, IEnumerable<HubProduct> registrations, Func<HubProduct, string> folderOf = null)
         {
             var byName = new Dictionary<string, PackageRecord>();
             foreach (PackageRecord p in packages)
@@ -171,16 +171,16 @@ namespace FirstSymbol.Hub
             foreach (CatalogEntry e in Catalog.Entries)
             {
                 seen.Add(e.Package);
-                result.Add(Make(e.Package, e, byName, regs));
+                result.Add(Make(e.Package, e, byName, regs, folderOf));
             }
             foreach (string name in byName.Keys)
-                if (seen.Add(name)) result.Add(Make(name, null, byName, regs));
+                if (seen.Add(name)) result.Add(Make(name, null, byName, regs, folderOf));
             foreach (string name in regs.Keys)
-                if (seen.Add(name)) result.Add(Make(name, null, byName, regs));
+                if (seen.Add(name)) result.Add(Make(name, null, byName, regs, folderOf));
             return result;
         }
 
-        static ProductState Make(string package, CatalogEntry entry, Dictionary<string, PackageRecord> packages, Dictionary<string, HubProduct> regs)
+        static ProductState Make(string package, CatalogEntry entry, Dictionary<string, PackageRecord> packages, Dictionary<string, HubProduct> regs, Func<HubProduct, string> folderOf)
         {
             packages.TryGetValue(package, out PackageRecord record);
             regs.TryGetValue(package, out HubProduct reg);
@@ -196,7 +196,8 @@ namespace FirstSymbol.Hub
                 RepoUrl = entry?.RepoUrl ?? record?.RepositoryUrl ?? "",
                 LegacySettingsPath = entry?.LegacySettingsPath,
                 Registration = reg,
-                Installed = record != null,
+                // A registration is the source of truth: a product kept as a plain folder under Assets is not in the Package Manager's list.
+                Installed = record != null || reg != null,
             };
             s.SettingsPath = reg?.SettingsPath ?? "Project/FirstSymbol/" + s.Display;
             if (record != null)
@@ -206,6 +207,15 @@ namespace FirstSymbol.Hub
                 s.Source = record.Source ?? "";
                 s.GitHash = record.GitHash ?? "";
                 s.ResolvedPath = record.ResolvedPath ?? "";
+            }
+            else if (reg != null)
+            {
+                string folder = folderOf?.Invoke(reg);
+                string root = folder != null ? Locations.PackageRoot(folder) : null;
+                s.Source = root != null && root.Replace('\\', '/').StartsWith("Assets/", StringComparison.Ordinal) ? "Assets folder" : "Local";
+                s.ResolvedPath = root != null ? System.IO.Path.GetFullPath(root) : "";
+                s.VersionText = root != null ? Locations.ReadVersion(root) : "";
+                s.Version = SemVer.Parse(s.VersionText);
             }
             return s;
         }

@@ -8,10 +8,26 @@ namespace FirstSymbol.Hub.UI
     /// <summary>Building blocks of the hub, styled by FirstSymbolHub.uss. Internal: products describe themselves with data (<see cref="HubStatusRow"/>), never with these.</summary>
     internal static class HubUI
     {
-        const string SheetPath = "Packages/" + Catalog.HubPackage + "/Editor/UI/FirstSymbolHub.uss";
         static StyleSheet s_Sheet;
 
-        static StyleSheet Sheet => s_Sheet != null ? s_Sheet : s_Sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(SheetPath);
+        static StyleSheet Sheet => s_Sheet != null ? s_Sheet : s_Sheet = LoadSheet();
+
+        /// <summary>Next to the hub's own assembly definition, wherever the hub lives: a package, or a folder under Assets.</summary>
+        static StyleSheet LoadSheet()
+        {
+            string folder = Locations.AsmdefFolder("FirstSymbol.Hub.Editor");
+            StyleSheet sheet = folder != null ? AssetDatabase.LoadAssetAtPath<StyleSheet>(folder + "/UI/FirstSymbolHub.uss") : null;
+            if (sheet != null) return sheet;
+            foreach (string guid in AssetDatabase.FindAssets("FirstSymbolHub t:StyleSheet"))
+            {
+                sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(AssetDatabase.GUIDToAssetPath(guid));
+                if (sheet != null) return sheet;
+            }
+            return null;
+        }
+
+        /// <summary>Whether the hub's stylesheet loaded.</summary>
+        internal static bool SheetLoaded => Sheet != null;
 
         internal static VisualElement Root(bool light)
         {

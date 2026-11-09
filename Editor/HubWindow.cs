@@ -179,7 +179,7 @@ namespace FirstSymbol.Hub
             m_Pages.Clear();
             m_Hosts.Clear();
             m_PageHost = new PageHost();
-            m_Products = Registry.Build(CollectPackages(), CollectRegistrations());
+            m_Products = Registry.Build(CollectPackages(), CollectRegistrations(), Locations.FolderOf);
             ApplyLatest();
 
             rootVisualElement.Clear();
@@ -314,7 +314,7 @@ namespace FirstSymbol.Hub
                 page.style.paddingLeft = 10;
                 page.style.paddingTop = 8;
                 page.style.maxWidth = 640;
-                var products = Registry.Build(HubWindow.CollectPackages(), HubWindow.CollectRegistrations());
+                var products = Registry.Build(HubWindow.CollectPackages(), HubWindow.CollectRegistrations(), Locations.FolderOf);
                 VisualElement card = HubUI.Card("FirstSymbol packages");
                 foreach (ProductState p in products)
                     if (p.Installed) card.Add(HubUI.Row(p.Display, "v" + p.VersionText));

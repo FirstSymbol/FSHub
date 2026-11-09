@@ -49,6 +49,7 @@ namespace FirstSymbol.Hub.Tests
         [TearDown]
         public void TearDown()
         {
+            RemoveFolder();
             HubPrefs.InMemory = false;
             HubNet.Interceptor = null;
             HubWindow.PackageSource = null;
@@ -316,7 +317,10 @@ namespace FirstSymbol.Hub.Tests
             foreach (ProductState p in window.Products.Where(p => p.Installed))
                 Assert.IsNotNull(p.Registration, p.Package + " installed but its hub page assembly did not register");
             foreach (CatalogEntry e in Catalog.Entries.Where(e => real.All(r => r.Name != e.Package)))
-                Assert.IsFalse(window.Products.Single(p => p.Package == e.Package).Installed, e.Package);
+            {
+                ProductState p = window.Products.Single(x => x.Package == e.Package);
+                Assert.AreEqual(p.Registration != null, p.Installed, e.Package + ": not in the Package Manager, so installed only when it registered (a folder under Assets)");
+            }
         }
 
         [Test]
@@ -330,6 +334,80 @@ namespace FirstSymbol.Hub.Tests
                 Assert.IsNotNull(window.SettingsPathOf(p), p.Package + " has no settings page");
                 Assert.IsNotNull(window.Root.Q<VisualElement>(className: "fs-host"), p.Package);
             }
+        }
+
+        // ---- Where the hub and its products live ----
+
+        [Test]
+        public void TheStylesheetIsFoundWhereverTheHubLives()
+        {
+            Assert.IsTrue(UI.HubUI.SheetLoaded, "FirstSymbolHub.uss did not load");
+            Assert.AreEqual(1, UI.HubUI.Root(false).styleSheets.count);
+        }
+
+        [UnityEngine.TestTools.UnityTest]
+        public System.Collections.IEnumerator TheHubIsStyledOnceItIsLaidOut()
+        {
+            Fake(true, "1.0.0", false, null);
+            var window = EditorWindow.GetWindow<HubWindow>();
+            for (int i = 0; i < 6; i++)
+            {
+                window.Repaint();
+                yield return null;
+            }
+            VisualElement nav = window.Root.Q<VisualElement>(className: "fs-nav");
+            Assert.AreEqual(168f, nav.resolvedStyle.width, 1f, "the sidebar has its width only if the stylesheet applied");
+            Assert.IsTrue(window.Root.resolvedStyle.backgroundColor.a > 0.5f);
+        }
+
+        string m_Folder;
+
+        void RemoveFolder()
+        {
+            if (m_Folder == null) return;
+            if (Directory.Exists(m_Folder)) Directory.Delete(m_Folder, true);
+            if (File.Exists(m_Folder + ".meta")) File.Delete(m_Folder + ".meta");
+            m_Folder = null;
+        }
+
+        string MakePackageFolder(string name, string version)
+        {
+            m_Folder = "Assets/" + name;
+            Directory.CreateDirectory(m_Folder + "/Editor");
+            File.WriteAllText(m_Folder + "/package.json", "{ \"name\": \"x\", \"version\": \"" + version + "\" }");
+            return m_Folder + "/Editor";
+        }
+
+        [Test]
+        public void AProductKeptUnderAssetsIsInstalledWithItsOwnVersion()
+        {
+            string editor = MakePackageFolder("FSHubTestProduct", "0.9.5");
+            List<ProductState> list = Registry.Build(new List<PackageRecord>(), new HubProduct[] { new FakeProduct("com.firstsymbol.lettera", "Lettera") }, _ => editor);
+            ProductState p = list.Single(x => x.Package == "com.firstsymbol.lettera");
+            Assert.IsTrue(p.Installed, "the registration is the source of truth");
+            Assert.AreEqual("0.9.5", p.VersionText);
+            Assert.AreEqual("Assets folder", p.Source);
+            Assert.IsTrue(p.Version.Valid);
+            Assert.IsFalse(list.Single(x => x.Package == "com.firstsymbol.vectra").Installed);
+        }
+
+        [Test]
+        public void TheCompatRulesUseTheVersionOfAProductKeptUnderAssets()
+        {
+            string editor = MakePackageFolder("FSHubTestProduct", "0.9.5");
+            var regs = new HubProduct[] { new FakeProduct("com.firstsymbol.lettera", "Lettera"), new FakeProduct("com.firstsymbol.vectra", "Vectra") };
+            var packages = new List<PackageRecord> { Pkg("com.firstsymbol.vectra", "0.4.0") };
+            var notes = Compat.Evaluate(Registry.Build(packages, regs, r => r.PackageName.EndsWith("lettera") ? editor : null));
+            Assert.IsTrue(notes.Any(n => n.Id == "vectra-text-needs-lettera-1"));
+        }
+
+        [Test]
+        public void ThePackageJsonOfTheHubItselfIsFound()
+        {
+            string folder = Locations.AsmdefFolder("FirstSymbol.Hub.Editor");
+            Assert.IsNotNull(folder);
+            Assert.IsNotNull(Locations.PackageRoot(folder));
+            Assert.IsNotEmpty(Locations.ReadVersion(Locations.PackageRoot(folder)));
         }
 
         // ---- Timings (Q5) ----

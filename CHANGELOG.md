@@ -2,6 +2,12 @@
 
 All notable changes to this package are documented in this file.
 
+## [0.1.2] - 2026-11-09
+
+### Fixed
+- **A hub kept as a folder under `Assets` showed no styling.** The stylesheet was looked up at a fixed `Packages/com.firstsymbol.hub/...` path. It is now found next to the hub's own assembly definition, wherever the hub lives.
+- **Products kept as folders under `Assets` showed as not installed.** A product that registers with the hub counts as installed whether or not the Package Manager lists it. Its source reads "assets folder", its version comes from the `package.json` beside its hub page assembly, and the compatibility rules use that version.
+
 ## [0.1.1] - 2026-11-09
 
 ### Docs

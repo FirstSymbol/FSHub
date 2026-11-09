@@ -13,7 +13,10 @@ namespace FirstSymbol.Hub
         static string HubVersion()
         {
             UnityEditor.PackageManager.PackageInfo info = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(Pages).Assembly);
-            return info != null ? info.version : "";
+            if (info != null) return info.version;
+            string folder = Locations.AsmdefFolder("FirstSymbol.Hub.Editor");
+            string root = folder != null ? Locations.PackageRoot(folder) : null;
+            return root != null ? Locations.ReadVersion(root) : "";
         }
 
         static string SourceWord(string source)
@@ -25,6 +28,7 @@ namespace FirstSymbol.Hub
                 case "Embedded": return "embedded";
                 case "Registry": return "registry";
                 case "LocalTarball": return "tarball";
+                case "Assets folder": return "assets folder";
                 default: return source.ToLowerInvariant();
             }
         }
