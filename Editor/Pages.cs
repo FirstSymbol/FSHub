@@ -159,7 +159,7 @@ namespace FirstSymbol.Hub
             }
             Show();
             page.Add(HubUI.Card("Updates",
-                HubUI.Row("Check GitHub for new tags once a day", HubUI.Switch(() => HubPrefs.CheckUpdates, on => HubPrefs.CheckUpdates = on), "Off by default. When on, the hub asks GitHub for the tags of each installed product when it opens, at most once a day."),
+                HubUI.SwitchRow("Check GitHub for new tags once a day", HubUI.Switch(() => HubPrefs.CheckUpdates, on => HubPrefs.CheckUpdates = on), "Off by default. When on, the hub asks GitHub for the tags of each installed product when it opens, at most once a day."),
                 HubUI.Text("One request per installed product to the public tags list on GitHub, no sign-in, nothing about your project. Off, the hub sends nothing at all.", "fs-hint"),
                 HubUI.Row("Last check", last),
                 results,

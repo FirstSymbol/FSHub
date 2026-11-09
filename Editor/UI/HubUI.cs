@@ -96,6 +96,14 @@ namespace FirstSymbol.Hub.UI
             return row;
         }
 
+        /// <summary>A switch at the end of a line that may be long.</summary>
+        internal static VisualElement SwitchRow(string label, VisualElement control, string tooltip = null)
+        {
+            VisualElement row = El("fs-row", Text(label, "fs-row__label fs-row__label--grow"), control);
+            if (tooltip != null) row.tooltip = tooltip;
+            return row;
+        }
+
         internal static VisualElement Row(string label, string value, HubTone tone = HubTone.Normal)
         {
             string cls = tone == HubTone.Good ? "fs-row__value fs-row__value--good" : tone == HubTone.Warn ? "fs-row__value fs-row__value--warn" : tone == HubTone.Bad ? "fs-row__value fs-row__value--bad" : "fs-row__value";

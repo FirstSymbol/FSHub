@@ -381,12 +381,12 @@ namespace FirstSymbol.Hub.Tests
 
         // ---- Screenshots (only with FSHUB_SHOTS set) ----
 
-        [Test]
+        [UnityEngine.TestTools.UnityTest]
         [Category("Screenshots")]
-        public void ScreenshotsOfEachPageInBothSkins()
+        public System.Collections.IEnumerator ScreenshotsOfEachPageInBothSkins()
         {
             string dir = Environment.GetEnvironmentVariable("FSHUB_SHOTS");
-            if (string.IsNullOrEmpty(dir)) Assert.Ignore("FSHUB_SHOTS is not set");
+            if (string.IsNullOrEmpty(dir)) { Assert.Ignore("FSHUB_SHOTS is not set"); yield break; }
             string tag = Environment.GetEnvironmentVariable("FSHUB_TAG") ?? "shot";
             Directory.CreateDirectory(dir);
             HubPrefs.CheckUpdates = false;
@@ -403,14 +403,27 @@ namespace FirstSymbol.Hub.Tests
                 foreach (string page in pages)
                 {
                     window.Select(page);
-                    window.Repaint();
-                    UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+                    for (int frame = 0; frame < 6; frame++)
+                    {
+                        window.Repaint();
+                        UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+                        yield return null;
+                    }
                     string file = Path.Combine(dir, tag + "_" + page + "_" + (theme == 2 ? "light" : "dark") + ".png");
                     Texture2D tex = null;
                     if (capture != null)
                     {
-                        object[] args = capture.GetParameters().Length == 1 ? new object[] { window } : null;
-                        if (args != null) tex = capture.Invoke(null, args) as Texture2D;
+                        int w = Mathf.Max(64, (int)window.position.width), h = Mathf.Max(64, (int)window.position.height);
+                        var rt = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32);
+                        object ok = capture.Invoke(null, new object[] { window, rt });
+                        Debug.Log("HUB-SHOT capture " + ok + " " + w + "x" + h);
+                        var previous = RenderTexture.active;
+                        RenderTexture.active = rt;
+                        tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+                        tex.ReadPixels(new Rect(0, 0, w, h), 0, 0);
+                        tex.Apply();
+                        RenderTexture.active = previous;
+                        rt.Release();
                     }
                     if (tex != null) File.WriteAllBytes(file, tex.EncodeToPNG());
                     else Debug.Log("HUB-SHOT no texture for " + file);
