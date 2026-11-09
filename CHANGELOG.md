@@ -2,7 +2,12 @@
 
 All notable changes to this package are documented in this file.
 
-## [Unreleased]
+## [0.1.1] - 2026-11-09
+
+### Docs
+- The README says that packages kept as folders under `Assets` need `FIRSTSYMBOL_HUB` among the scripting define symbols for their pages to appear.
+
+## [0.1.0] - 2026-11-09
 
 ### Added
 - First version. **Window > FirstSymbol > Hub** and **Tools > FirstSymbol > Hub** open one window for FirstSymbol packages: an overview of what is installed (version, source, commit, docs, changelog and repository links), cards with the git URL for products that are not, and a compatibility list from a rules table (Vectra's Lettera text engine needs Lettera 1.0.0 or newer).
