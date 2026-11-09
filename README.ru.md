@@ -14,6 +14,8 @@ https://github.com/FirstSymbol/FSHub.git
 
 Нужен Unity 6.3 LTS (6000.3) или новее. Хаб работает только в редакторе и ничего не добавляет в сборку.
 
+Продукты находят хаб через менеджер пакетов. Если хаб и продукты лежат обычными папками в `Assets`, а не пакетами, добавьте `FIRSTSYMBOL_HUB` в **Project Settings > Player > Scripting Define Symbols**, иначе их страницы в хабе не появятся.
+
 ## Как пользоваться
 
 **Window > FirstSymbol > Hub** (а также **Tools > FirstSymbol > Hub**).

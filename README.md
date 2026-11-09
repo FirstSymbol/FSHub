@@ -14,6 +14,8 @@ https://github.com/FirstSymbol/FSHub.git
 
 Requires Unity 6.3 LTS (6000.3) or newer. The hub is editor-only: it adds nothing to a build.
 
+Products find the hub through the package manager. If you keep the hub and the products as plain folders under `Assets` instead of packages, add `FIRSTSYMBOL_HUB` to **Project Settings > Player > Scripting Define Symbols**, or their pages will not appear in the hub.
+
 ## Using it
 
 **Window > FirstSymbol > Hub** (also **Tools > FirstSymbol > Hub**).
